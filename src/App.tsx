@@ -192,7 +192,7 @@ export default function App() {
       {/* Sidebar */}
       <aside className="w-80 bg-[#151515] border-r border-white/5 flex flex-col shrink-0">
         <div className="p-6 border-b border-white/5">
-          <h1 className="text-xl font-serif italic text-white tracking-tight">Valukivi Puttonen</h1>
+          <h1 className="text-xl font-serif italic text-white tracking-tight">Valukivi Puttonen Design</h1>
           <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 mt-1">Stone Designer v1.0</p>
         </div>
 
@@ -213,7 +213,7 @@ export default function App() {
                       const width = Number(e.target.value);
                       setSelectedSize(prev => ({ ...prev, width, label: `${width}x${prev.height} cm` }));
                     }}
-                    className="w-full bg-[#1c1c1c] border border-white/10 rounded-lg px-3 py-2.5 appearance-none focus:outline-none focus:border-zinc-400 transition-colors text-sm"
+                    className="w-full bg-[#222222] border border-white/10 rounded-lg px-3 py-2.5 appearance-none focus:outline-none focus:border-zinc-400 transition-colors text-sm"
                   >
                     {WIDTH_OPTIONS.map(w => (
                       <option key={w} value={w}>{w} cm</option>
@@ -231,7 +231,7 @@ export default function App() {
                       const height = Number(e.target.value);
                       setSelectedSize(prev => ({ ...prev, height, label: `${prev.width}x${height} cm` }));
                     }}
-                    className="w-full bg-[#1c1c1c] border border-white/10 rounded-lg px-3 py-2.5 appearance-none focus:outline-none focus:border-zinc-400 transition-colors text-sm"
+                    className="w-full bg-[#222222] border border-white/10 rounded-lg px-3 py-2.5 appearance-none focus:outline-none focus:border-zinc-400 transition-colors text-sm"
                   >
                     {HEIGHT_OPTIONS.map(h => (
                       <option key={h} value={h}>{h} cm</option>
@@ -255,7 +255,7 @@ export default function App() {
                   key={color.value}
                   onClick={() => setStoneColor(color.value)}
                   className={cn(
-                    "w-full bg-[#1c1c1c] border border-white/10 rounded-lg px-3 py-2 text-sm transition-all text-center",
+                    "w-full bg-[#222222] border border-white/10 rounded-lg px-3 py-2 text-sm transition-all text-center",
                     stoneColor === color.value 
                       ? "border-zinc-400 text-white bg-zinc-800" 
                       : "text-zinc-400 hover:border-zinc-600"
@@ -286,7 +286,7 @@ export default function App() {
                       key={color.value}
                       onClick={() => setLetteringColor(color.value)}
                       className={cn(
-                        "w-full bg-[#1c1c1c] border border-white/10 rounded-lg px-3 py-2 text-sm transition-all text-center",
+                        "w-full bg-[#222222] border border-white/10 rounded-lg px-3 py-2 text-sm transition-all text-center",
                         letteringColor === color.value 
                           ? "border-zinc-400 text-white bg-zinc-800" 
                           : "text-zinc-400 hover:border-zinc-600"
@@ -320,7 +320,7 @@ export default function App() {
                     value={firstNameInput}
                     onChange={(e) => setFirstNameInput(e.target.value.toUpperCase())}
                     placeholder="MATTI"
-                    className="w-full bg-[#1c1c1c] border border-white/10 rounded-lg pl-3 pr-10 py-2.5 text-sm focus:outline-none focus:border-zinc-400 transition-colors"
+                    className="w-full bg-[#222222] border border-white/10 rounded-lg pl-3 pr-10 py-2.5 text-sm focus:outline-none focus:border-zinc-400 transition-colors"
                   />
                   <button 
                     onClick={() => {
@@ -358,7 +358,7 @@ export default function App() {
                     value={lastNameInput}
                     onChange={(e) => setLastNameInput(e.target.value.toUpperCase())}
                     placeholder="MEIKÄLÄINEN"
-                    className="w-full bg-[#1c1c1c] border border-white/10 rounded-lg pl-3 pr-10 py-2.5 text-sm focus:outline-none focus:border-zinc-400 transition-colors"
+                    className="w-full bg-[#222222] border border-white/10 rounded-lg pl-3 pr-10 py-2.5 text-sm focus:outline-none focus:border-zinc-400 transition-colors"
                   />
                   <button 
                     onClick={() => {
@@ -396,7 +396,7 @@ export default function App() {
                     value={birthDateInput}
                     onChange={(e) => handleBirthDateChange(e.target.value)}
                     placeholder="01.01.1950"
-                    className="w-full bg-[#1c1c1c] border border-white/10 rounded-lg pl-3 pr-10 py-2.5 text-sm focus:outline-none focus:border-zinc-400 transition-colors tracking-wider font-mono"
+                    className="w-full bg-[#222222] border border-white/10 rounded-lg pl-3 pr-10 py-2.5 text-sm focus:outline-none focus:border-zinc-400 transition-colors tracking-wider font-mono"
                   />
                   <button 
                     onClick={addBirthDateEngraving}
@@ -429,7 +429,7 @@ export default function App() {
                     value={deathDateInput}
                     onChange={(e) => handleDeathDateChange(e.target.value)}
                     placeholder="01.01.2024"
-                    className="w-full bg-[#1c1c1c] border border-white/10 rounded-lg pl-3 pr-10 py-2.5 text-sm focus:outline-none focus:border-zinc-400 transition-colors tracking-wider font-mono"
+                    className="w-full bg-[#222222] border border-white/10 rounded-lg pl-3 pr-10 py-2.5 text-sm focus:outline-none focus:border-zinc-400 transition-colors tracking-wider font-mono"
                   />
                   <button 
                     onClick={addDeathDateEngraving}
@@ -442,7 +442,7 @@ export default function App() {
 
               <button 
                 onClick={() => addEngraving('cutout')}
-                className="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3 flex items-center gap-3 hover:border-zinc-400 transition-all text-sm group"
+                className="w-full bg-[#222222] border border-white/10 rounded-xl px-4 py-3 flex items-center gap-3 hover:border-zinc-400 transition-all text-sm group"
               >
                 <div className="w-8 h-8 bg-zinc-800 rounded-lg flex items-center justify-center text-zinc-400 group-hover:text-white transition-colors">
                   <Flame size={16} />
@@ -452,7 +452,7 @@ export default function App() {
 
               <button 
                 onClick={() => addEngraving('cross')}
-                className="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3 flex items-center gap-3 hover:border-zinc-400 transition-all text-sm group"
+                className="w-full bg-[#222222] border border-white/10 rounded-xl px-4 py-3 flex items-center gap-3 hover:border-zinc-400 transition-all text-sm group"
               >
                 <div className="w-8 h-8 bg-zinc-800 rounded-lg flex items-center justify-center text-zinc-400 group-hover:text-white transition-colors">
                   <Plus size={16} />
@@ -475,7 +475,7 @@ export default function App() {
                       "group p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between",
                       selectedId === eng.id 
                         ? "bg-zinc-800/50 border-zinc-500 text-white" 
-                        : "bg-[#1c1c1c] border-white/5 hover:border-white/10"
+                        : "bg-[#222222] border-white/5 hover:border-white/10"
                     )}
                   >
                     <div className="flex items-center gap-3 overflow-hidden">
@@ -514,7 +514,7 @@ export default function App() {
                         <textarea 
                           value={selectedEngraving.text}
                           onChange={(e) => updateEngraving(selectedEngraving.id, { text: e.target.value.toUpperCase() })}
-                          className="w-full bg-[#1c1c1c] border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-zinc-400 min-h-[80px] resize-none"
+                          className="w-full bg-[#222222] border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-zinc-400 min-h-[80px] resize-none"
                           placeholder="Enter text..."
                         />
                       </div>
@@ -527,7 +527,7 @@ export default function App() {
                           <select 
                             value={selectedEngraving.fontSize * 10}
                             onChange={(e) => updateEngraving(selectedEngraving.id, { fontSize: Number(e.target.value) / 10 })}
-                            className="w-full bg-[#1c1c1c] border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-zinc-400 appearance-none"
+                            className="w-full bg-[#222222] border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-zinc-400 appearance-none"
                           >
                             {(selectedEngraving.category === 'firstName' ? FIRST_NAME_SIZES : 
                               selectedEngraving.category === 'lastName' ? LAST_NAME_SIZES : 
@@ -546,13 +546,13 @@ export default function App() {
                           step="0.05"
                           value={selectedEngraving.letterSpacing || 1}
                           onChange={(e) => updateEngraving(selectedEngraving.id, { letterSpacing: Number(e.target.value) })}
-                          className="w-full bg-[#1c1c1c] border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-zinc-400"
+                          className="w-full bg-[#222222] border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-zinc-400"
                         />
                       </div>
                     </div>
 
                     {(selectedEngraving.category === 'birthDate' || selectedEngraving.category === 'deathDate') && (
-                      <div className="flex items-center justify-between p-3 bg-[#1c1c1c] border border-white/10 rounded-lg">
+                      <div className="flex items-center justify-between p-3 bg-[#222222] border border-white/10 rounded-lg">
                         <span className="text-xs font-medium text-zinc-400">Lisää merkki ({selectedEngraving.category === 'birthDate' ? '*' : '†'})</span>
                         <button
                           onClick={() => updateEngraving(selectedEngraving.id, { showSymbol: !selectedEngraving.showSymbol })}
@@ -580,7 +580,7 @@ export default function App() {
                               "flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 transition-all",
                               selectedEngraving.color === color.value 
                                 ? "bg-zinc-800 border-zinc-400 text-white" 
-                                : "bg-[#1c1c1c] text-zinc-400 hover:border-zinc-600"
+                                : "bg-[#222222] text-zinc-400 hover:border-zinc-600"
                             )}
                           >
                             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color.value }} />
@@ -607,7 +607,7 @@ export default function App() {
                               "flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 transition-all",
                               selectedEngraving.color === color.value 
                                 ? "bg-zinc-800 border-zinc-400 text-white" 
-                                : "bg-[#1c1c1c] text-zinc-400 hover:border-zinc-600"
+                                : "bg-[#222222] text-zinc-400 hover:border-zinc-600"
                             )}
                           >
                             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color.value }} />
@@ -634,7 +634,7 @@ export default function App() {
             className="w-full bg-white text-black font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-zinc-200 transition-colors"
           >
             <Download size={16} />
-            Export Design
+            Tallenna kuva
           </button>
         </div>
       </aside>
