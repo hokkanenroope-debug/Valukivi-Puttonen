@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Stage, Layer, Rect, Text, Transformer, Group, Path, Star } from 'react-konva';
+import { Stage, Layer, Rect, Text, Transformer, Group, Path, Star, Shape, Circle } from 'react-konva';
 import useImage from 'use-image';
 import { 
   Plus, 
@@ -111,6 +111,8 @@ export default function App() {
   const [deathDateSize, setDeathDateSize] = useState(25); // Default 25mm
   const [birthDateInput, setBirthDateInput] = useState("");
   const [deathDateInput, setDeathDateInput] = useState("");
+  const [isStretchingTop, setIsStretchingTop] = useState(false);
+  const [topPoints, setTopPoints] = useState<number[]>([0, 0, 0, 0, 0, 0, 0, 0]); // Y-offsets in cm
   const [blackTexture] = useImage('/stone-black.jpg');
   const [greyTexture] = useImage('/stone-grey.jpg');
   const stageRef = useRef<any>(null);
@@ -283,6 +285,35 @@ export default function App() {
                   {color.label}
                 </button>
               ))}
+            </div>
+          </section>
+
+          {/* Stone Shape Stretching */}
+          <section className="space-y-3">
+            <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold flex items-center gap-2">
+              <Move size={12} />
+              Kiven muotoilu
+            </label>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => setIsStretchingTop(!isStretchingTop)}
+                className={cn(
+                  "w-full py-2.5 rounded-lg border text-xs font-medium transition-all flex items-center justify-center gap-2",
+                  isStretchingTop 
+                    ? "bg-zinc-100 text-black border-white" 
+                    : "bg-[#222222] border-white/10 text-zinc-400 hover:border-zinc-600"
+                )}
+              >
+                {isStretchingTop ? "Lopeta muotoilu" : "Muotoile yläreunaa"}
+              </button>
+              {isStretchingTop && (
+                <button
+                  onClick={() => setTopPoints([0, 0, 0, 0, 0, 0, 0, 0])}
+                  className="w-full py-2 bg-red-900/20 border border-red-900/30 text-red-400 rounded-lg text-[10px] uppercase tracking-wider font-bold hover:bg-red-900/30 transition-all"
+                >
+                  Nollaa muotoilu
+                </button>
+              )}
             </div>
           </section>
 
@@ -678,6 +709,12 @@ export default function App() {
           className="flex-1 bg-[radial-gradient(#222_1px,transparent_1px)] [background-size:20px_20px] flex items-center justify-center overflow-hidden"
           onClick={() => handleSelect(null)}
         >
+          {isStretchingTop && (
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-blue-500/90 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg z-20 flex items-center gap-2 animate-bounce">
+              <Move size={14} />
+              Vedä valkoisia palloja muokataksesi yläreunaa
+            </div>
+          )}
           <div className="relative shadow-2xl shadow-black/50">
             <Stage
               width={selectedSize.width * scale}
@@ -693,55 +730,116 @@ export default function App() {
                 {(() => {
                   const selectedStone = STONE_COLORS.find(c => c.value === stoneColor);
                   const texture = selectedStone?.label === "Musta" ? blackTexture : greyTexture;
+                  const w = selectedSize.width * scale;
+                  const h = selectedSize.height * scale;
+
+                  const stoneSceneFunc = (context: any, shape: any) => {
+                    context.beginPath();
+                    context.moveTo(0, h);
+                    context.lineTo(w, h);
+                    context.lineTo(w, topPoints[topPoints.length - 1] * scale);
+                    
+                    // Top edge curve
+                    const points = topPoints.map((y, i) => ({
+                      x: (w * i) / (topPoints.length - 1),
+                      y: y * scale
+                    }));
+
+                    // Draw curve from right to left to match the original path direction
+                    for (let i = points.length - 1; i > 0; i--) {
+                      const pCurr = points[i];
+                      const pPrev = points[i-1];
+                      const midX = (pCurr.x + pPrev.x) / 2;
+                      const midY = (pCurr.y + pPrev.y) / 2;
+                      context.quadraticCurveTo(pCurr.x, pCurr.y, midX, midY);
+                    }
+                    context.lineTo(points[0].x, points[0].y);
+                    
+                    context.lineTo(0, h);
+                    context.closePath();
+                    context.fillStrokeShape(shape);
+                  };
                   
                   return (
-                    <Rect
-                      width={selectedSize.width * scale}
-                      height={selectedSize.height * scale}
-                      fill={!texture ? stoneColor : undefined}
-                      fillPatternImage={texture}
-                      fillPatternScale={{ 
-                        x: (selectedSize.width * scale) / (texture?.width || 1), 
-                        y: (selectedSize.height * scale) / (texture?.height || 1) 
-                      }}
-                      shadowBlur={30}
-                      shadowColor="rgba(0,0,0,0.6)"
-                      shadowOffset={{ x: 10, y: 10 }}
-                      cornerRadius={4}
-                      stroke="#333"
-                      strokeWidth={1}
-                    />
+                    <>
+                      <Shape
+                        sceneFunc={stoneSceneFunc}
+                        fill={!texture ? stoneColor : undefined}
+                        fillPatternImage={texture}
+                        fillPatternScale={{ 
+                          x: w / (texture?.width || 1), 
+                          y: h / (texture?.height || 1) 
+                        }}
+                        shadowBlur={30}
+                        shadowColor="rgba(0,0,0,0.6)"
+                        shadowOffset={{ x: 10, y: 10 }}
+                        stroke="#333"
+                        strokeWidth={1}
+                      />
+                      
+                      {/* Bevel Effect */}
+                      <Shape
+                        sceneFunc={stoneSceneFunc}
+                        stroke="rgba(255,255,255,0.05)"
+                        strokeWidth={4}
+                        listening={false}
+                      />
+                      <Shape
+                        sceneFunc={stoneSceneFunc}
+                        stroke="rgba(0,0,0,0.3)"
+                        strokeWidth={1}
+                        listening={false}
+                      />
+                      
+                      {/* Subtle Texture Overlay */}
+                      <Shape
+                        sceneFunc={stoneSceneFunc}
+                        fillLinearGradientStartPoint={{ x: 0, y: 0 }}
+                        fillLinearGradientEndPoint={{ x: w, y: h }}
+                        fillLinearGradientColorStops={[0, 'rgba(255,255,255,0.02)', 1, 'rgba(0,0,0,0.2)']}
+                        listening={false}
+                      />
+
+                      {/* Stretching Handles */}
+                      {isStretchingTop && topPoints.map((yOffset, i) => (
+                        <Circle
+                          key={`handle-${i}`}
+                          x={(w * i) / (topPoints.length - 1)}
+                          y={yOffset * scale}
+                          radius={6}
+                          fill="white"
+                          stroke="#3b82f6"
+                          strokeWidth={2}
+                          draggable
+                          dragBoundFunc={(pos) => {
+                            // Lock X position and bound Y
+                            const relativeX = (w * i) / (topPoints.length - 1);
+                            const minY = -25 * scale; // Allow stretching 25cm above top
+                            const maxY = h - 10 * scale; // Allow shrinking to 10cm from bottom
+                            return {
+                              x: relativeX,
+                              y: Math.max(minY, Math.min(maxY, pos.y))
+                            };
+                          }}
+                          onDragMove={(e) => {
+                            const newY = e.target.y() / scale;
+                            const newPoints = [...topPoints];
+                            newPoints[i] = newY;
+                            setTopPoints(newPoints);
+                          }}
+                          onMouseEnter={(e) => {
+                            const container = e.target.getStage()?.container();
+                            if (container) container.style.cursor = 'ns-resize';
+                          }}
+                          onMouseLeave={(e) => {
+                            const container = e.target.getStage()?.container();
+                            if (container) container.style.cursor = 'default';
+                          }}
+                        />
+                      ))}
+                    </>
                   );
                 })()}
-                
-                {/* Bevel Effect */}
-                <Rect
-                  width={selectedSize.width * scale}
-                  height={selectedSize.height * scale}
-                  stroke="rgba(255,255,255,0.05)"
-                  strokeWidth={4}
-                  cornerRadius={4}
-                  listening={false}
-                />
-                <Rect
-                  width={selectedSize.width * scale}
-                  height={selectedSize.height * scale}
-                  stroke="rgba(0,0,0,0.3)"
-                  strokeWidth={1}
-                  cornerRadius={4}
-                  listening={false}
-                />
-                
-                {/* Subtle Texture */}
-                <Rect
-                  width={selectedSize.width * scale}
-                  height={selectedSize.height * scale}
-                  fillLinearGradientStartPoint={{ x: 0, y: 0 }}
-                  fillLinearGradientEndPoint={{ x: selectedSize.width * scale, y: selectedSize.height * scale }}
-                  fillLinearGradientColorStops={[0, 'rgba(255,255,255,0.02)', 1, 'rgba(0,0,0,0.2)']}
-                  cornerRadius={4}
-                  listening={false}
-                />
 
                 {/* Engravings */}
                 {engravings.map((eng) => (
