@@ -112,7 +112,7 @@ export default function App() {
   const [birthDateInput, setBirthDateInput] = useState("");
   const [deathDateInput, setDeathDateInput] = useState("");
   const [isStretchingTop, setIsStretchingTop] = useState(false);
-  const [topPoints, setTopPoints] = useState<number[]>([0, 0, 0, 0, 0, 0, 0, 0]); // Y-offsets in cm
+  const [topPoints, setTopPoints] = useState<number[]>([0, 0, 0, 0, 0]); // Y-offsets in cm
   const [blackTexture] = useImage('/stone-black.jpg');
   const [greyTexture] = useImage('/stone-grey.jpg');
   const stageRef = useRef<any>(null);
@@ -308,7 +308,7 @@ export default function App() {
               </button>
               {isStretchingTop && (
                 <button
-                  onClick={() => setTopPoints([0, 0, 0, 0, 0, 0, 0, 0])}
+                  onClick={() => setTopPoints([0, 0, 0, 0, 0])}
                   className="w-full py-2 bg-red-900/20 border border-red-900/30 text-red-400 rounded-lg text-[10px] uppercase tracking-wider font-bold hover:bg-red-900/30 transition-all"
                 >
                   Nollaa muotoilu
@@ -712,7 +712,7 @@ export default function App() {
           {isStretchingTop && (
             <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-blue-500/90 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg z-20 flex items-center gap-2 animate-bounce">
               <Move size={14} />
-              Vedä valkoisia palloja muokataksesi yläreunaa
+              Vedä palloja alaspäin muokataksesi yläreunaa
             </div>
           )}
           <div className="relative shadow-2xl shadow-black/50">
@@ -814,7 +814,7 @@ export default function App() {
                           dragBoundFunc={(pos) => {
                             // Lock X position and bound Y
                             const relativeX = (w * i) / (topPoints.length - 1);
-                            const minY = -25 * scale; // Allow stretching 25cm above top
+                            const minY = 0; // Don't allow moving above the top edge
                             const maxY = h - 10 * scale; // Allow shrinking to 10cm from bottom
                             return {
                               x: relativeX,
