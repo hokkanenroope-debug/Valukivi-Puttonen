@@ -21,6 +21,81 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+const DateInput = ({ value, onChange, onAdd }: { value: string, onChange: (val: string) => void, onAdd: () => void }) => {
+  const parts = value.split('.');
+  const day = parts[0] || '';
+  const month = parts[1] || '';
+  const year = parts[2] || '';
+
+  const dayRef = useRef<HTMLInputElement>(null);
+  const monthRef = useRef<HTMLInputElement>(null);
+  const yearRef = useRef<HTMLInputElement>(null);
+
+  const update = (d: string, m: string, y: string) => {
+    if (!d && !m && !y) {
+      onChange("");
+    } else {
+      onChange(`${d}.${m}.${y}`);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent, currentPart: 'day' | 'month' | 'year') => {
+    if (e.key === '.') {
+      e.preventDefault();
+      if (currentPart === 'day') monthRef.current?.focus();
+      if (currentPart === 'month') yearRef.current?.focus();
+    }
+    if (e.key === 'Enter') {
+      onAdd();
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-1 bg-[#222222] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus-within:border-zinc-400 transition-colors w-full">
+      <input 
+        ref={dayRef}
+        type="text"
+        value={day}
+        onChange={(e) => {
+          const val = e.target.value.replace(/\D/g, '').slice(0, 2);
+          update(val, month, year);
+          if (val.length === 2) monthRef.current?.focus();
+        }}
+        onKeyDown={(e) => handleKeyDown(e, 'day')}
+        placeholder="PP"
+        className="w-6 bg-transparent focus:outline-none text-center placeholder:text-zinc-700"
+      />
+      <span className="text-zinc-600">.</span>
+      <input 
+        ref={monthRef}
+        type="text"
+        value={month}
+        onChange={(e) => {
+          const val = e.target.value.replace(/\D/g, '').slice(0, 2);
+          update(day, val, year);
+          if (val.length === 2) yearRef.current?.focus();
+        }}
+        onKeyDown={(e) => handleKeyDown(e, 'month')}
+        placeholder="KK"
+        className="w-6 bg-transparent focus:outline-none text-center placeholder:text-zinc-700"
+      />
+      <span className="text-zinc-600">.</span>
+      <input 
+        ref={yearRef}
+        type="text"
+        value={year}
+        onChange={(e) => {
+          const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+          update(day, month, val);
+        }}
+        onKeyDown={(e) => handleKeyDown(e, 'year')}
+        placeholder="VVVV"
+        className="flex-1 bg-transparent focus:outline-none text-center placeholder:text-zinc-700"
+      />
+    </div>
+  );
+};
+
 export default function App() {
   const [selectedSize, setSelectedSize] = useState<TombstoneSize>({ width: 60, height: 80, label: "60x80 cm" });
   const [stoneColor, setStoneColor] = useState(STONE_COLORS[0].value);
@@ -44,62 +119,6 @@ export default function App() {
   // Handle selection
   const handleSelect = (id: string | null) => {
     setSelectedId(id);
-  };
-
-  const handleBirthDateChange = (value: string) => {
-    const isDeleting = value.length < birthDateInput.length;
-    let digits = value.replace(/\D/g, "").slice(0, 8);
-    
-    if (isDeleting && birthDateInput.length > 0) {
-      const lastChar = birthDateInput[birthDateInput.length - 1];
-      if (lastChar === '.' || lastChar === ' ') {
-        if (!value.endsWith(lastChar)) {
-          digits = digits.slice(0, -1);
-        }
-      }
-    }
-
-    let formatted = "";
-    if (digits.length > 0) {
-      formatted += digits.substring(0, 2);
-      if (digits.length >= 2) formatted += ".";
-      if (digits.length > 2) {
-        formatted += digits.substring(2, 4);
-        if (digits.length >= 4) formatted += ".";
-      }
-      if (digits.length > 4) {
-        formatted += digits.substring(4, 8);
-      }
-    }
-    setBirthDateInput(formatted);
-  };
-
-  const handleDeathDateChange = (value: string) => {
-    const isDeleting = value.length < deathDateInput.length;
-    let digits = value.replace(/\D/g, "").slice(0, 8);
-    
-    if (isDeleting && deathDateInput.length > 0) {
-      const lastChar = deathDateInput[deathDateInput.length - 1];
-      if (lastChar === '.' || lastChar === ' ') {
-        if (!value.endsWith(lastChar)) {
-          digits = digits.slice(0, -1);
-        }
-      }
-    }
-
-    let formatted = "";
-    if (digits.length > 0) {
-      formatted += digits.substring(0, 2);
-      if (digits.length >= 2) formatted += ".";
-      if (digits.length > 2) {
-        formatted += digits.substring(2, 4);
-        if (digits.length >= 4) formatted += ".";
-      }
-      if (digits.length > 4) {
-        formatted += digits.substring(4, 8);
-      }
-    }
-    setDeathDateInput(formatted);
   };
 
   const addBirthDateEngraving = () => {
@@ -391,16 +410,14 @@ export default function App() {
                   </div>
                 </div>
                 <div className="relative">
-                  <input 
-                    type="text"
+                  <DateInput 
                     value={birthDateInput}
-                    onChange={(e) => handleBirthDateChange(e.target.value)}
-                    placeholder="01.01.1950"
-                    className="w-full bg-[#222222] border border-white/10 rounded-lg pl-3 pr-10 py-2.5 text-sm focus:outline-none focus:border-zinc-400 transition-colors tracking-wider font-mono"
+                    onChange={setBirthDateInput}
+                    onAdd={addBirthDateEngraving}
                   />
                   <button 
                     onClick={addBirthDateEngraving}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 hover:bg-zinc-800 rounded-md transition-colors text-zinc-400 hover:text-white"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 hover:bg-zinc-800 rounded-md transition-colors text-zinc-400 hover:text-white z-10"
                   >
                     <Plus size={16} />
                   </button>
@@ -424,16 +441,14 @@ export default function App() {
                   </div>
                 </div>
                 <div className="relative">
-                  <input 
-                    type="text"
+                  <DateInput 
                     value={deathDateInput}
-                    onChange={(e) => handleDeathDateChange(e.target.value)}
-                    placeholder="01.01.2024"
-                    className="w-full bg-[#222222] border border-white/10 rounded-lg pl-3 pr-10 py-2.5 text-sm focus:outline-none focus:border-zinc-400 transition-colors tracking-wider font-mono"
+                    onChange={setDeathDateInput}
+                    onAdd={addDeathDateEngraving}
                   />
                   <button 
                     onClick={addDeathDateEngraving}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 hover:bg-zinc-800 rounded-md transition-colors text-zinc-400 hover:text-white"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 hover:bg-zinc-800 rounded-md transition-colors text-zinc-400 hover:text-white z-10"
                   >
                     <Plus size={16} />
                   </button>
@@ -511,12 +526,20 @@ export default function App() {
                     {selectedEngraving.type === 'text' && (
                       <div className="space-y-2">
                         <span className="text-[10px] text-zinc-600 uppercase font-bold">Content</span>
-                        <textarea 
-                          value={selectedEngraving.text}
-                          onChange={(e) => updateEngraving(selectedEngraving.id, { text: e.target.value.toUpperCase() })}
-                          className="w-full bg-[#222222] border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-zinc-400 min-h-[80px] resize-none"
-                          placeholder="Enter text..."
-                        />
+                        {(selectedEngraving.category === 'birthDate' || selectedEngraving.category === 'deathDate') ? (
+                          <DateInput 
+                            value={selectedEngraving.text}
+                            onChange={(val) => updateEngraving(selectedEngraving.id, { text: val })}
+                            onAdd={() => {}}
+                          />
+                        ) : (
+                          <textarea 
+                            value={selectedEngraving.text}
+                            onChange={(e) => updateEngraving(selectedEngraving.id, { text: e.target.value.toUpperCase() })}
+                            className="w-full bg-[#222222] border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-zinc-400 min-h-[80px] resize-none"
+                            placeholder="Enter text..."
+                          />
+                        )}
                       </div>
                     )}
 
